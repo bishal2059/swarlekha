@@ -1,0 +1,11 @@
+torch>=2.0
+transformers>=4.30
+huggingface_hub>=0.18.0
+numpy
+soundfile
+librosa
+tqdm
+sentencepiece
+pydub
+scipy
+torchvision
