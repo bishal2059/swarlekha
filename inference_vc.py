@@ -13,12 +13,12 @@ else:
 
 print(f"Using device: {device}")
 
-AUDIO_PATH = "YOUR_FILE.wav"
-TARGET_VOICE_PATH = "YOUR_FILE.wav"
+AUDIO_PATH = "examples/input/mine.wav" # the output follows the tone and text of this audio
+TARGET_VOICE_PATH = "examples/input/TARGET_VOICE.wav" # the output mimics the voice in this audio
 
 model = SwarlekhaVC.from_pretrained(device)
 wav = model.generate(
     audio=AUDIO_PATH,
     target_voice_path=TARGET_VOICE_PATH,
 )
-ta.save("testvc.wav", wav, model.sr)
+ta.save("examples/output/test-vc.wav", wav, model.sr)

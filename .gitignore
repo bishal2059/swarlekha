@@ -6,3 +6,4 @@ swarlekha_model/__pycache__/
 swarlekha_model/weights/
 .DS_Store
 .ipynb_checkpoints/
+examples/output/*.wav

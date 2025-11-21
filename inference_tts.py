@@ -15,10 +15,10 @@ print(f"Using device: {device}")
 model = SwarlekhaTTS.from_pretrained(device=device)
 
 text = "Ezreal and Jinx teamed up with Ahri, Yasuo, and Teemo to take down the enemy's Nexus in an epic late-game pentakill."
-wav = model.generate(text)
-ta.save("test-1.wav", wav, model.sr)
+wav = model.generate(text) #synthesize with default voice
+ta.save("examples/output/test-1.wav", wav, model.sr)
 
 # If you want to synthesize with a different voice, specify the audio prompt
-AUDIO_PROMPT_PATH = "YOUR_FILE.wav"
-wav = model.generate(text, audio_prompt_path=AUDIO_PROMPT_PATH)
-ta.save("test-2.wav", wav, model.sr)
+AUDIO_PROMPT_PATH = "examples/input/mine.wav"
+wav = model.generate(text, audio_prompt_path=AUDIO_PROMPT_PATH) #clone the voice from this audio
+ta.save("examples/output/test-2.wav", wav, model.sr)
