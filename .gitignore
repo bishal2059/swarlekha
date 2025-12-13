@@ -7,3 +7,13 @@ swarlekha_model/weights/
 .DS_Store
 .ipynb_checkpoints/
 examples/output/*.wav
+
+#Backend files
+backend/.deps_installed
+backend/__pycache__/
+backend/venv/
+
+backend.log
+frontend.log
+.backend.pid
+.frontend.pid

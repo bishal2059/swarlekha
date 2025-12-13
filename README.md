@@ -1,15 +1,22 @@
 # Swarlekha: Advanced Text-to-Speech and Voice Conversion System
 
-**Swarlekha** is a state-of-the-art AI-powered text-to-speech (TTS) and voice conversion (VC) system that delivers high-quality, natural-sounding speech synthesis. Built on advanced neural architectures, Swarlekha supports zero-shot voice cloning, enabling users to generate speech in any voice with just a short audio sample.
+**Swarlekha** is a state-of-the-art AI-powered text-to-speech (TTS) and voice conversion (VC) system with a complete full-stack web application. Built on advanced neural architectures, it supports zero-shot voice cloning—generate speech in any voice with just a short audio sample.
 
 ## 🚀 Features
 
+### Core ML Features
 - **High-Quality Text-to-Speech**: Generate natural, expressive speech from text
 - **Zero-Shot Voice Cloning**: Clone any voice with just a few seconds of audio
 - **Voice Conversion**: Transform the voice characteristics of existing audio
 - **Multi-Device Support**: Automatic detection and optimization for CUDA, MPS, and CPU
-- **Easy-to-Use API**: Simple Python interface for quick integration
-- **Professional Audio Quality**: Built on advanced neural architectures including flow matching and transformer models
+
+### Web Application Features
+- **FastAPI Backend**: REST API with automatic documentation
+- **React Frontend**: Modern UI with glassmorphism design
+- **Drag & Drop Audio Upload**: Easy reference audio uploading
+- **Voice Recording**: Record directly in browser for voice cloning
+- **Real-time Audio Playback**: Play and download generated audio
+- **Fully Responsive**: Mobile-friendly design
 
 ## 📁 Project Structure
 
@@ -17,8 +24,20 @@
 swarlekha/
 ├── README.md                    # Project documentation
 ├── requirements.txt             # Python dependencies
-├── inference_tts.py             # Text-to-speech inference script
+├── inference_tts.py             # TTS inference script
 ├── inference_vc.py              # Voice conversion inference script
+├── start_all.sh                 # Start both backend and frontend
+├── stop_all.sh                  # Stop all services
+├── backend/                     # FastAPI REST API
+│   ├── main.py                  # API server
+│   ├── models.py                # Pydantic data models
+│   └── start.sh                 # Backend start script
+├── frontend/                    # React TypeScript UI
+│   ├── src/
+│   │   ├── components/          # UI components
+│   │   ├── services/api.ts      # API client
+│   │   └── App.tsx              # Main app
+│   └── public/demo/             # Demo audio files
 ├── examples/                    # Input/output audio examples
 └── swarlekha_model/             # Core model implementation
     ├── tts.py                   # TTS model wrapper
@@ -35,28 +54,55 @@ swarlekha/
 
 ### Prerequisites
 - Python 3.9+
+- Node.js 18+
 - CUDA-compatible GPU (recommended) or CPU
 - At least 8GB RAM (16GB+ recommended for GPU usage)
 
-### Environment Setup
+### Quick Start (Full Stack)
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/bishal2059/swarlekha.git
-   cd swarlekha
-   ```
+```bash
+# 1. Clone the repository
+git clone https://github.com/bishal2059/swarlekha.git
+cd swarlekha
 
-2. **Create and activate conda environment:**
-   ```bash
-   conda create -n swarlekha python=3.9 -y
-   conda activate swarlekha
-   ```
+# 2. Backend setup
+cd backend
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cd ..
+pip install -r requirements.txt
 
-3. **Install dependencies:**
-   ```bash
-   pip install --upgrade pip
-   pip install -r requirements.txt
-   ```
+# 3. Frontend setup
+cd frontend
+npm install
+cd ..
+
+# 4. Start everything
+chmod +x start_all.sh stop_all.sh
+./start_all.sh
+```
+
+**Application URLs:**
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API Documentation: http://localhost:8000/docs
+
+### Python-Only Setup (Without Web App)
+
+```bash
+# Clone and setup
+git clone https://github.com/bishal2059/swarlekha.git
+cd swarlekha
+
+# Create conda environment
+conda create -n swarlekha python=3.9 -y
+conda activate swarlekha
+
+# Install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
 ### Dependencies
 - `torch>=2.6.0` - PyTorch deep learning framework
@@ -65,13 +111,48 @@ swarlekha/
 - `librosa>=0.11.0` - Audio analysis
 - `diffusers>=0.29.0` - Diffusion models
 - `safetensors>=0.5.3` - Safe tensor serialization
-- Additional utilities: `numpy`, `s3tokenizer`, `resemble-perth`, `conformer`
+- Additional: `numpy`, `s3tokenizer`, `resemble-perth`, `conformer`
+
+## 🔄 How the Project is Initialized
+
+### Model Loading
+The ML models are **automatically downloaded** from Hugging Face ([ResembleAI/chatterbox](https://huggingface.co/ResembleAI/chatterbox)) on first run and cached locally in the Hugging Face cache directory (`~/.cache/huggingface/`).
+
+### Backend Initialization
+When `python main.py` runs in the backend:
+1. FastAPI server starts on port 8000
+2. The `SwarlekhaTTS` model is loaded (triggers model download on first run)
+3. Device auto-detection selects CUDA > MPS > CPU
+4. API endpoints become available at `/api/*`
+
+### Frontend Initialization
+When `npm run dev` runs in the frontend:
+1. Vite development server starts on port 3000
+2. React app loads with environment variables from `.env`
+3. API client connects to backend at `VITE_API_URL` (default: http://localhost:8000)
+
+### Startup Scripts
+- **`start_all.sh`**: Launches both backend and frontend in background processes
+- **`stop_all.sh`**: Terminates all running services
 
 ## 🎯 Usage
 
-### Text-to-Speech (TTS)
+### Option 1: Web Application
 
-Generate speech from text with default voice or clone a specific voice:
+1. Start the application: `./start_all.sh`
+2. Open browser: http://localhost:3000
+3. Enter text in the text area
+4. Choose voice type:
+   - **Default Voice**: Click "Default Voice" button
+   - **Clone Voice**: Upload audio or record directly
+5. Click "Generate Voice"
+6. Play or download the generated audio
+
+To stop: `./stop_all.sh`
+
+### Option 2: Python Scripts
+
+**Text-to-Speech (TTS):**
 
 ```python
 import torchaudio as ta
@@ -91,9 +172,7 @@ wav_cloned = model.generate(text, audio_prompt_path=audio_prompt)
 ta.save("output_cloned.wav", wav_cloned, model.sr)
 ```
 
-### Voice Conversion (VC)
-
-Transform voice characteristics of existing audio:
+**Voice Conversion (VC):**
 
 ```python
 import torchaudio as ta
@@ -157,8 +236,33 @@ Swarlekha leverages several advanced neural network architectures:
 - [ ] **Nepali Language Support**: Complete integration for Nepali text-to-speech voice cloning
 - [ ] **Real-time Inference**: Optimizations for live speech generation
 - [ ] **Fine-tuning Framework**: Custom model training on domain-specific data
-- [ ] **Web Interface**: User-friendly web application for non-technical users
-- [ ] **API Server**: RESTful API for integration into applications
+
+## 🌐 API Reference
+
+### Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/health` | Health check |
+| POST | `/api/generate` | Generate speech from text |
+| GET | `/api/voices` | List available voices |
+
+### Generate Speech
+
+```bash
+# Default voice
+curl -X POST "http://localhost:8000/api/generate" \
+  -F "text=Hello, this is a test" \
+  -F "voice_name=test" \
+  --output output.wav
+
+# With voice cloning
+curl -X POST "http://localhost:8000/api/generate" \
+  -F "text=Hello, this is a test" \
+  -F "reference_audio=@path/to/audio.wav" \
+  -F "voice_name=custom" \
+  --output output.wav
+```
 
 
 ## 🙏 Acknowledgments
