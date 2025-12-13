@@ -53,7 +53,7 @@ swarlekha/
 ## 🛠 Installation & Setup
 
 ### Prerequisites
-- Python 3.9+
+- Python 3.10
 - Node.js 18+
 - CUDA-compatible GPU (recommended) or CPU
 - At least 8GB RAM (16GB+ recommended for GPU usage)
@@ -66,11 +66,8 @@ git clone https://github.com/bishal2059/swarlekha.git
 cd swarlekha
 
 # 2. Backend setup
-cd backend
-python -m venv venv
+python3.10 -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-cd ..
 pip install -r requirements.txt
 
 # 3. Frontend setup
@@ -96,7 +93,7 @@ git clone https://github.com/bishal2059/swarlekha.git
 cd swarlekha
 
 # Create conda environment
-conda create -n swarlekha python=3.9 -y
+conda create -n swarlekha python=3.10 -y
 conda activate swarlekha
 
 # Install dependencies
