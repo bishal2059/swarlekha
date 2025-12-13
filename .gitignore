@@ -17,3 +17,12 @@ backend.log
 frontend.log
 .backend.pid
 .frontend.pid
+.deps_installed
+
+
+venv/
+.venv/
+.env
+
+#examples
+examples/output/

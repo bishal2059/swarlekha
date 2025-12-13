@@ -33,12 +33,11 @@ echo ""
 
 # Start backend
 echo "${BLUE}Starting Backend...${NC}"
-cd backend
 
 # Check if virtual environment exists
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."
-    python3 -m venv venv
+    python3.10 -m venv venv
 fi
 
 # Activate virtual environment
@@ -53,11 +52,10 @@ fi
 
 # Start backend in background
 echo "Starting FastAPI server on http://localhost:8000"
-python main.py > ../backend.log 2>&1 &
+which python > /dev/null 2>&1
+python backend/main.py > backend.log 2>&1 &
 BACKEND_PID=$!
 echo "Backend PID: $BACKEND_PID"
-
-cd ..
 
 # Wait a moment for backend to start
 sleep 3
