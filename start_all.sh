@@ -37,11 +37,11 @@ echo "${BLUE}Starting Backend...${NC}"
 # Check if virtual environment exists
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."
-    python3.10 -m venv venv
+    python3 -m venv venv1
 fi
 
 # Activate virtual environment
-source venv/bin/activate
+source venv1/bin/activate
 
 # Install backend dependencies if needed
 if [ ! -f ".deps_installed" ]; then

@@ -123,7 +123,11 @@ class SwarlekhaNepaliTTS:
         self.tokenizer = tokenizer
         self.device = device
         self.conds = conds
-        self.watermarker = perth.PerthImplicitWatermarker()
+        # AFTER
+        class _NoopWatermarker:
+            def apply_watermark(self, audio, sample_rate=None): return audio
+            def __call__(self, *a, **kw): return audio if a else None
+        self.watermarker = _NoopWatermarker()
 
     @classmethod
     def from_local(cls, ckpt_dir, device) -> 'SwarlekhaNepaliTTS':

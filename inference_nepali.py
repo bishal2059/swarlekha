@@ -41,7 +41,9 @@ model = SwarlekhaNepaliTTS.from_pretrained(device=device)
 
 
 
-text = "मेरो देश नेपाल हो। म पोखरामा बस्छु। पोखरा निकै सुन्दर छ।"
+text = "नमस्ते! आज हामी एकदमै सजिलो र सबैको मनपर्ने नेपाली खाना—दाल, भात र आलु-तमा (वा आलु-कोपी) को तरकारी—बनाउन सिक्नेछौँ।"
 AUDIO_PROMPT_PATH = "examples/input/indra.wav"
 wav = model.generate(text, audio_prompt_path=AUDIO_PROMPT_PATH) #clone the voice from this audio
-torchaudio.save("examples/output/indra/test-nepali.wav", wav, model.sr)
+import soundfile as sf
+import numpy as np
+sf.write("examples/output/indra/test-nepali.wav", wav.squeeze().cpu().numpy(), model.sr)

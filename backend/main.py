@@ -6,6 +6,8 @@ from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 import torchaudio as ta
+import soundfile as sf
+import numpy as np
 import torch
 import sys
 import uuid
@@ -13,6 +15,7 @@ from datetime import datetime
 from pathlib import Path
 import tempfile
 from typing import Optional
+import traceback
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -126,6 +129,7 @@ def _load_model(lang: str):
             return nepali_model
         except Exception:
             model_status[normalized] = "error"
+            traceback.print_exc()
             raise
 
 
@@ -140,6 +144,7 @@ def _resolve_model(lang: str):
         raise
     except Exception as e:
         normalized = _normalize_language(lang)
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to load {normalized} model: {str(e)}")
 
 
@@ -261,7 +266,16 @@ def _blocking_generate(active_model, text, audio_prompt_path, output_path):
         wav = active_model.generate(text, audio_prompt_path=audio_prompt_path)
     else:
         wav = active_model.generate(text)
-    ta.save(str(output_path), wav, active_model.sr)
+    try:
+        audio_data = wav.squeeze().cpu().numpy()
+        print(f"[DEBUG] wav shape: {wav.shape}, dtype: {wav.dtype}, sr: {active_model.sr}")
+        print(f"[DEBUG] output_path: {output_path}")
+        sf.write(str(output_path), audio_data, active_model.sr)
+        print(f"[DEBUG] File saved successfully")
+    except Exception as save_err:
+        print(f"[DEBUG] SAVE FAILED: {save_err}")
+        import traceback
+        traceback.print_exc()
 
 
 # ---------------------------------------------------------------------------
@@ -337,7 +351,15 @@ async def generate_voice_stream(
             finally:
                 t3_step_callback.reset(tok)
 
-            ta.save(str(output_path), wav, active_model.sr)
+            try:
+                audio_data = wav.squeeze().cpu().numpy()
+                print(f"[DEBUG] wav shape: {wav.shape}, dtype: {wav.dtype}, sr: {active_model.sr}")
+                print(f"[DEBUG] output_path: {output_path}")
+                sf.write(str(output_path), audio_data, active_model.sr)
+                print(f"[DEBUG] File saved successfully")
+            except Exception as save_err:
+                print(f"[DEBUG] SAVE FAILED: {save_err}")
+                import traceback; traceback.print_exc()
 
             if temp_audio_path and Path(temp_audio_path).exists():
                 Path(temp_audio_path).unlink()
